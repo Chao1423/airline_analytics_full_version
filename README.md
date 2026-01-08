@@ -4,7 +4,7 @@ A comprehensive airline review analytics dashboard with sentiment analysis, topi
 
 ## 🎥 Video Demo
 
-[![AirSight Demo](docs/video_preview.png)](https://www.youtube.com/watch?v=xxxx)
+[![AirSight Demo](video_preview.png)](https://www.youtube.com/watch?v=NY5uz8wZI4E)
 
 📌 This video provides a full walkthrough of the AirSight analytics platform, including dashboard KPIs, text mining, topic drivers, RAG-based insights, and rating simulation.
 
