@@ -2,6 +2,8 @@
 
 A comprehensive airline review analytics dashboard with sentiment analysis, topic mining, and RAG-powered insights.
 
+![Video Preview](./video_preview.png)
+
 ## Table of Contents
 
 - [Features](#features)
@@ -38,14 +40,15 @@ A comprehensive airline review analytics dashboard with sentiment analysis, topi
 ### 1. Clone the Repository
 
 ```bash
-git clone <repository-url>
-cd airline-dashboard
+git clone https://github.com/Chao1423/airline_analytics_full_version
+cd airline_analytics_full_version
 ```
 
 ### 2. Set Up Python Virtual Environment
 
 ```bash
 # Create virtual environment
+sudo apt install -y python3.12-venv
 python3 -m venv venv
 
 # Activate virtual environment
@@ -210,6 +213,7 @@ API Documentation: http://127.0.0.1:8000/docs
 ```
 
 Frontend will be available at: http://localhost:3000
+(For Chome user，please use incognito browsing otherwise the browser will block the access)
 
 ## Pipelines
 
@@ -242,6 +246,8 @@ python sentiment_pipeline.py --batch-size 50 --max-reviews 100
 # Generate report only
 python sentiment_pipeline.py --report-only
 ```
+
+⚠️The initial runtime is up to 40hrs, however it won't affect other ongoing jobs. New data processed will be displayed automaticly.
 
 #### Schedule with Cron
 
@@ -469,4 +475,8 @@ See `backend/license.txt` for license information.
 ## Support
 
 For issues and questions, please open an issue on GitHub.
+
+## Demostration video: how to use:
+
+https://youtu.be/NY5uz8wZI4E
 
