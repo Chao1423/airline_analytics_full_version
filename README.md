@@ -211,6 +211,7 @@ API Documentation: http://127.0.0.1:8000/docs
 ```
 
 Frontend will be available at: http://localhost:3000
+(For Chome user，please use incognito browsing otherwise the browser will block the access)
 
 ## Pipelines
 
