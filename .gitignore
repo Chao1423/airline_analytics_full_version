@@ -46,6 +46,16 @@ ENV/
 *.sql.backup
 *.dump
 *.backup
+airline_db.sql
+
+# AWS/SSH keys
+*.pem
+*.key
+mykey.pem
+
+# Archive files
+*.tar.gz
+*.zip
 
 # Temporary files
 *.tmp
