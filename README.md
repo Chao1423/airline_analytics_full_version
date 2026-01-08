@@ -38,14 +38,15 @@ A comprehensive airline review analytics dashboard with sentiment analysis, topi
 ### 1. Clone the Repository
 
 ```bash
-git clone <repository-url>
-cd airline-dashboard
+git clone https://github.com/Chao1423/airline_analytics_full_version
+cd airline_analytics_full_version
 ```
 
 ### 2. Set Up Python Virtual Environment
 
 ```bash
 # Create virtual environment
+sudo apt install -y python3.12-venv
 python3 -m venv venv
 
 # Activate virtual environment
