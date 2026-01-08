@@ -1,7 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import React, { useEffect, useRef, useMemo } from "react";
 import { init } from "echarts";
-import useFetch from '../../hooks/useFetch';
+import useQuery from '../../hooks/useQuery';
 import useContext from '../../zustand/useContext';
 import { Spinner } from "@/components/ui/spinner";
 
@@ -14,7 +14,11 @@ export default function RatingDistributionSection() {
         return `/airlines/${encodeURIComponent(targetAirline)}/rating-distribution`;
     }, [targetAirline]);
     
-    const { data, loading } = useFetch(url);
+    const { data, loading } = useQuery(url, {
+        cacheTime: 10 * 60 * 1000, // 缓存 10 分钟
+        staleTime: 5 * 60 * 1000, // 5 分钟内不重新请求
+        refetchOnMount: false, // 使用缓存，不重新请求
+    });
 
     useEffect(() => {
         if (!chartRef.current || !data) return;

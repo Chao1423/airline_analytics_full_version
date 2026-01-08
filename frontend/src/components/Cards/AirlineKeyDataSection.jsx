@@ -1,7 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { FaUtensils, FaUsers, FaTrophy, FaWifi } from "react-icons/fa";
 import React, { useMemo } from "react";
-import useFetch from '../../hooks/useFetch';
+import useQuery from '../../hooks/useQuery';
 import useContext from '../../zustand/useContext';
 import { Spinner } from "@/components/ui/spinner";
 
@@ -13,7 +13,11 @@ export const AirlineKeyDataSection = () => {
         return `/airlines/${encodeURIComponent(targetAirline)}/key-data`;
     }, [targetAirline]);
     
-    const { data, loading } = useFetch(url);
+    const { data, loading } = useQuery(url, {
+        cacheTime: 10 * 60 * 1000, // 缓存 10 分钟
+        staleTime: 5 * 60 * 1000, // 5 分钟内不重新请求
+        refetchOnMount: false, // 使用缓存，不重新请求
+    });
 
     return (
         <Card className="bg-white rounded-[20px] border border-[#f8f9fa] shadow-[0px_4px_20px_#ededed80] min-h-[300px]">

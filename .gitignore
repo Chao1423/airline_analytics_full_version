@@ -12,9 +12,25 @@ dist
 dist-ssr
 *.local
 
+# Environment variables (sensitive data)
 .env
+.env.local
+.env.*.local
+**/.env
+**/.env.local
 
-# Editor directories and files
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+.venv
+
+# IDE
 .vscode/*
 !.vscode/extensions.json
 .idea
@@ -24,3 +40,16 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Database dumps and backups (large files)
+*.sql.dump
+*.sql.backup
+*.dump
+*.backup
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.swo
+*~

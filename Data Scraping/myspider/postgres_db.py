@@ -18,11 +18,11 @@ class PostgresClient:
         try:
             self.cur.execute(
                 """
-                INSERT INTO airlines (name, image, reviewCount)
+                INSERT INTO airlines (name, image, "reviewCount")
                 VALUES (%s, %s, %s)
                 ON CONFLICT (name) DO UPDATE
                 SET image = EXCLUDED.image,
-                    reviewCount = EXCLUDED.reviewCount;
+                    "reviewCount" = EXCLUDED."reviewCount";
                 """, (name, image, review_count),
             )
         except Exception as e:
@@ -57,13 +57,13 @@ class PostgresClient:
             self.cur.execute(
                 """
                 INSERT INTO reviews (
-                    reviewId, userName, airlineName,
-                    title, score, content, verifiedType, 
-                    country, dateReview,
-                    aircraft, typeOfTraveller, seatType, route, dateFlown,
-                    seatComfort, cabinStaffService, foodBeverages,
-                    inflightEntertainment, groundService, wifiConnectivity,
-                    valueForMoney, recommended
+                    "reviewId", "userName", "airlineName",
+                    title, score, content, "verifiedType", 
+                    country, "dateReview",
+                    aircraft, "typeOfTraveller", "seatType", route, "dateFlown",
+                    "seatComfort", "cabinStaffService", "foodBeverages",
+                    "inflightEntertainment", "groundService", "wifiConnectivity",
+                    "valueForMoney", recommended
                 ) VALUES (
                     %(reviewId)s, %(userName)s, %(airlineName)s, 
                     %(title)s, %(score)s, %(content)s, %(verifiedType)s,

@@ -1,20 +1,26 @@
 import { Card, CardContent } from "@/components/ui/card";
-import React, { useEffect, useRef, useMemo } from "react";
+import React, { useEffect, useRef, useMemo, useState } from "react";
 import { init } from "echarts";
-import useFetch from '../../hooks/useFetch';
+import useQuery from '../../hooks/useQuery';
 import useContext from '../../zustand/useContext';
 import { Spinner } from "@/components/ui/spinner";
+import { Button } from "@/components/ui/button";
 
 export default function SubItemScoringSection() {
     const chartRef = useRef(null);
     const targetAirline = useContext((state) => state.targetAirline);
+    const [useSentiment, setUseSentiment] = useState(false);
     
     const url = useMemo(() => {
         if (!targetAirline) return null;
-        return `/airlines/${encodeURIComponent(targetAirline)}/sub-item-scoring`;
-    }, [targetAirline]);
+        return `/airlines/${encodeURIComponent(targetAirline)}/sub-item-scoring?use_sentiment=${useSentiment}`;
+    }, [targetAirline, useSentiment]);
     
-    const { data, loading } = useFetch(url);
+    const { data, loading } = useQuery(url, {
+        cacheTime: 10 * 60 * 1000, // 缓存 10 分钟
+        staleTime: 5 * 60 * 1000, // 5 分钟内不重新请求
+        refetchOnMount: false, // 使用缓存，不重新请求
+    });
 
     useEffect(() => {
         if (!chartRef.current || !data) return;
@@ -35,17 +41,10 @@ export default function SubItemScoringSection() {
         const avgData = categories.map(cat => data.average_score[cat]);
 
         const option = {
-            grid: {
-                top: '10%',
-                left: '3%',
-                right: '4%',
-                bottom: '15%',
-                containLabel: true
-            },
             tooltip: {
-                trigger: 'axis',
-                axisPointer: {
-                    type: 'shadow'
+                trigger: 'item',
+                formatter: (params) => {
+                    return `${params.seriesName}<br/>${params.name}: ${params.value.toFixed(1)}`;
                 }
             },
             legend: {
@@ -58,72 +57,81 @@ export default function SubItemScoringSection() {
                 itemHeight: 10,
                 icon: 'circle'
             },
-            xAxis: {
-                type: 'category',
-                data: [
-                    'Seat\nComfort',
-                    'Cabin Staff\n& Service',
-                    'Food &\nBeverages',
-                    'Inflight\nEntertainment',
-                    'Ground\nService',
-                    'Wifi\nConnectivity',
-                    'Value for\nMoney'
+            radar: {
+                indicator: [
+                    { name: 'Seat Comfort', max: 5 },
+                    { name: 'Cabin Staff & Service', max: 5 },
+                    { name: 'Food & Beverages', max: 5 },
+                    { name: 'Inflight Entertainment', max: 5 },
+                    { name: 'Ground Service', max: 5 },
+                    { name: 'Wifi Connectivity', max: 5 },
+                    { name: 'Value for Money', max: 5 }
                 ],
-                axisLine: {
-                    lineStyle: {
-                        color: '#e0e0e0'
-                    }
-                },
-                axisTick: {
-                    show: false
-                },
-                axisLabel: {
-                    color: '#999',
+                center: ['50%', '55%'],
+                radius: '70%',
+                axisName: {
                     fontSize: 11,
-                    interval: 0
-                }
-            },
-            yAxis: {
-                type: 'value',
-                min: 0,
-                max: 5,
-                interval: 1,
-                axisLine: {
-                    show: false
+                    color: '#666',
+                    fontWeight: 'normal'
                 },
-                axisTick: {
-                    show: false
-                },
-                axisLabel: {
-                    color: '#999'
+                splitArea: {
+                    show: true,
+                    areaStyle: {
+                        color: ['rgba(250, 250, 250, 0.3)', 'rgba(200, 200, 200, 0.1)']
+                    }
                 },
                 splitLine: {
                     lineStyle: {
-                        color: '#f0f0f0',
+                        color: '#e0e0e0',
                         type: 'dashed'
+                    }
+                },
+                axisLine: {
+                    lineStyle: {
+                        color: '#e0e0e0'
                     }
                 }
             },
             series: [
                 {
                     name: 'Target Airline',
-                    type: 'bar',
-                    data: targetData,
-                    itemStyle: {
-                        color: '#0095ff',
-                        borderRadius: [4, 4, 0, 0]
-                    },
-                    barWidth: '35%'
+                    type: 'radar',
+                    data: [
+                        {
+                            value: targetData,
+                            name: 'Target Airline',
+                            areaStyle: {
+                                color: 'rgba(0, 149, 255, 0.2)'
+                            },
+                            lineStyle: {
+                                color: '#0095ff',
+                                width: 2
+                            },
+                            itemStyle: {
+                                color: '#0095ff'
+                            }
+                        }
+                    ]
                 },
                 {
                     name: 'Average Score',
-                    type: 'bar',
-                    data: avgData,
-                    itemStyle: {
-                        color: '#00e096',
-                        borderRadius: [4, 4, 0, 0]
-                    },
-                    barWidth: '35%'
+                    type: 'radar',
+                    data: [
+                        {
+                            value: avgData,
+                            name: 'Average Score',
+                            areaStyle: {
+                                color: 'rgba(0, 224, 150, 0.2)'
+                            },
+                            lineStyle: {
+                                color: '#00e096',
+                                width: 2
+                            },
+                            itemStyle: {
+                                color: '#00e096'
+                            }
+                        }
+                    ]
                 }
             ]
         };
@@ -143,7 +151,7 @@ export default function SubItemScoringSection() {
             chart.dispose();
             // chartRef.current = null;
         };
-    }, [data]);
+    }, [data, useSentiment]);
 
     return (
         <Card className="bg-white rounded-[20px] border border-[#f8f9fa] shadow-[0px_4px_20px_#ededed80] min-h-[300px]">
@@ -165,7 +173,27 @@ export default function SubItemScoringSection() {
                 </div>
             ) : (
                 <>
-                    <div className="pl-6 text-xl font-semibold">Sub-Item Scoring</div>
+                    <div className="pl-6 pt-4 flex items-center justify-between pr-6">
+                        <div className="text-xl font-semibold">Sub-Item Scoring</div>
+                        <div className="flex gap-2 items-center">
+                            <Button
+                                variant={!useSentiment ? 'default' : 'outline'}
+                                size="sm"
+                                onClick={() => setUseSentiment(false)}
+                                className="h-8"
+                            >
+                                Rating Data
+                            </Button>
+                            <Button
+                                variant={useSentiment ? 'default' : 'outline'}
+                                size="sm"
+                                onClick={() => setUseSentiment(true)}
+                                className="h-8"
+                            >
+                                Sentiment
+                            </Button>
+                        </div>
+                    </div>
 
                     <CardContent className="flex flex-1 min-h-[250px]">
                         <div ref={chartRef} className="w-full h-full" />

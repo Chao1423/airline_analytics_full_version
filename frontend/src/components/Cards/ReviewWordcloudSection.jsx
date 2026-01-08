@@ -2,7 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import React, { useEffect, useRef, useMemo } from "react";
 import { init } from "echarts";
 import "echarts-wordcloud";
-import useFetch from '../../hooks/useFetch';
+import useQuery from '../../hooks/useQuery';
 import useContext from '../../zustand/useContext';
 import { Spinner } from "@/components/ui/spinner";
 
@@ -16,7 +16,11 @@ export default function ReviewWordcloudSection() {
         return `/airlines/${encodeURIComponent(targetAirline)}/wordcloud-data`;
     }, [targetAirline]);
 
-    const { data, loading } = useFetch(url);
+    const { data, loading } = useQuery(url, {
+        cacheTime: 10 * 60 * 1000, // 缓存 10 分钟
+        staleTime: 5 * 60 * 1000, // 5 分钟内不重新请求
+        refetchOnMount: false, // 使用缓存，不重新请求
+    });
 
     const renderWordCloud = (chartRef, words, colorShades) => {
         const myChart = init(chartRef.current);

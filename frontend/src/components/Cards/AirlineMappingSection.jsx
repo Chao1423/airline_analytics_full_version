@@ -1,7 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import React, { useEffect, useRef, useMemo } from "react";
 import { init, registerMap } from "echarts";
-import useFetch from '../../hooks/useFetch';
+import useQuery from '../../hooks/useQuery';
 import useContext from '../../zustand/useContext';
 import { Spinner } from "@/components/ui/spinner";
 
@@ -14,12 +14,20 @@ export const AirlineMappingSection = () => {
         return `/airlines/${encodeURIComponent(targetAirline)}/city-distribution`;
     }, [targetAirline]);
 
-    const { data, loading } = useFetch(url);
+    const { data, loading } = useQuery(url, {
+        cacheTime: 10 * 60 * 1000, // 缓存 10 分钟
+        staleTime: 5 * 60 * 1000, // 5 分钟内不重新请求
+        refetchOnMount: false, // 使用缓存，不重新请求
+    });
 
     useEffect(() => {
-        if (!chartRef.current || !data) return;
+        if (!chartRef.current || !data || data.length === 0) return;
 
-        const chart = init(chartRef.current);
+        const chart = init(chartRef.current, null, {
+            renderer: 'canvas',
+            width: 'auto',
+            height: 'auto'
+        });
         chart.showLoading();
 
         fetch('/world.json')
@@ -39,11 +47,11 @@ export const AirlineMappingSection = () => {
                     },
                     geo: {
                         map: 'world',
-                        left: 0,
-                        right: 0,
-                        width: '100%',
-                        height: '100%',
-                        roam: false,
+                        left: '5%',
+                        right: '5%',
+                        top: '10%',
+                        bottom: '10%',
+                        roam: true,
                         zoom: 1,
                         center: [10, 15],
                         itemStyle: {
@@ -55,7 +63,9 @@ export const AirlineMappingSection = () => {
                             itemStyle: {
                                 areaColor: '#d1d5db'
                             }
-                        }
+                        },
+                        layoutCenter: ['50%', '50%'],
+                        layoutSize: '90%'
                     },
                     series: [
                         {
@@ -98,29 +108,29 @@ export const AirlineMappingSection = () => {
     }, [data]);
 
     return (
-        <Card className="bg-white rounded-[20px] border border-[#f8f9fa] shadow-[0px_4px_20px_#ededed80] min-h-[300px]">
+        <Card className="bg-white rounded-[20px] border border-[#f8f9fa] shadow-[0px_4px_20px_#ededed80] min-h-[500px]">
             {!targetAirline ? (
-                <div className="flex items-center justify-center h-full">
+                <div className="flex items-center justify-center h-full min-h-[500px]">
                     <div className="text-xl font-semibold text-center">
                         ✈️ Please search for an airline to view city distribution
                     </div>
                 </div>
             ) : loading ? (
-                <div className="flex items-center justify-center h-full">
+                <div className="flex items-center justify-center h-full min-h-[500px]">
                     <Spinner className="w-10 h-10 text-[#5D5FEF]" />
                 </div>
             ) : !data || data.length === 0 ? (
-                <div className="flex items-center justify-center h-full">
+                <div className="flex items-center justify-center h-full min-h-[500px]">
                     <div className="text-xl font-semibold text-center">
                         😢 No city distribution data available
                     </div>
                 </div>
             ) : (
                 <>
-                    <div className="pl-6 text-xl font-semibold">Airline Mapping</div>
+                    <div className="pl-6 pt-4 text-xl font-semibold">Airline Mapping</div>
 
-                    <CardContent className="flex flex-1 min-h-[250px]">
-                        <div ref={chartRef} className="w-full h-full" />
+                    <CardContent className="p-0" style={{ height: '450px' }}>
+                        <div ref={chartRef} style={{ width: '100%', height: '100%', minHeight: '450px' }} />
                     </CardContent>
                 </>
             )}

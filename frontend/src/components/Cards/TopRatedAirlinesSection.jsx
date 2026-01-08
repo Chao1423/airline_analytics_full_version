@@ -4,10 +4,13 @@ import { Button } from "@/components/ui/button";
 import React, { useMemo } from "react";
 import { useReactTable, getCoreRowModel, getPaginationRowModel, flexRender } from "@tanstack/react-table";
 import useFetch from '../../hooks/useFetch';
+import useContext from '../../zustand/useContext';
 import { Spinner } from "@/components/ui/spinner";
 
 export const TopRatedAirlinesSection = () => {
-    const { data, loading } = useFetch('/airlines/top-rated');
+    // 使用加权排名，最小评论数50（更合理）
+    const { data, loading } = useFetch('/airlines/top-rated?min_reviews=50&use_weighted=true');
+    const setTargetAirline = useContext((state) => state.setTargetAirline);
 
     const columns = [
         {
@@ -114,7 +117,16 @@ export const TopRatedAirlinesSection = () => {
                                 <TableBody>
                                     {table.getRowModel().rows.length ? (
                                         table.getRowModel().rows.map((row) => (
-                                            <TableRow key={row.id}>
+                                            <TableRow 
+                                                key={row.id}
+                                                className="cursor-pointer hover:bg-gray-50 transition-colors"
+                                                onClick={() => {
+                                                    const airlineName = row.original.name;
+                                                    if (airlineName) {
+                                                        setTargetAirline(airlineName);
+                                                    }
+                                                }}
+                                            >
                                                 {row.getVisibleCells().map((cell) => (
                                                     <TableCell key={cell.id} className="font-medium text-xs">
                                                         {flexRender(

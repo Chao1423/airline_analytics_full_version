@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import useFetch from '../../hooks/useFetch';
+import useQuery from '../../hooks/useQuery';
 import useContext from '../../zustand/useContext';
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -13,7 +13,15 @@ const SubmitContentCard = () => {
     
     const url = submitBody ? `/sentiment-tool/submit` : null;
 
-    const { data, loading } = useFetch(url, 'POST', submitBody);
+    // 对于 POST 请求，每次提交的内容都不同，所以使用较短的缓存时间
+    const { data, loading } = useQuery(url, {
+        method: 'POST',
+        body: submitBody,
+        enabled: !!submitBody, // 只在有 body 时启用
+        cacheTime: 1 * 60 * 1000, // 缓存 1 分钟（POST 请求通常不需要长时间缓存）
+        staleTime: 30 * 1000, // 30 秒内不重新请求
+        refetchOnMount: false, // 使用缓存，不重新请求
+    });
 
     useEffect(() => {
         if (data) {

@@ -3,7 +3,7 @@ import { RotateCcw, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button"
 import React, { useState, useMemo } from "react";
-import useFetch from '../../hooks/useFetch';
+import useQuery from '../../hooks/useQuery';
 import useContext from '../../zustand/useContext';
 import { Spinner } from "@/components/ui/spinner";
 
@@ -18,7 +18,11 @@ export const TopBar = () => {
         return `/airlines/${encodeURIComponent(targetAirline)}/info`;
     }, [targetAirline]);
     
-    const { data, loading } = useFetch(url);
+    const { data, loading } = useQuery(url, {
+        cacheTime: 10 * 60 * 1000, // 缓存 10 分钟
+        staleTime: 5 * 60 * 1000, // 5 分钟内不重新请求
+        refetchOnMount: false, // 使用缓存，不重新请求
+    });
 
     const handleSearchSubmit = () => {
         const trimmedInput = searchInput.trim();
