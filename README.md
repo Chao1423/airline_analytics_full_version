@@ -245,6 +245,8 @@ python sentiment_pipeline.py --batch-size 50 --max-reviews 100
 python sentiment_pipeline.py --report-only
 ```
 
+⚠️The initial runtime is up to 40hrs, however it won't affect other ongoing jobs. New data processed will be displayed automaticly.
+
 #### Schedule with Cron
 
 ```bash
