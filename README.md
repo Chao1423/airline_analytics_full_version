@@ -160,7 +160,7 @@ python -c "from postgres_db import PostgresClient; from dotenv import load_doten
 
 ## Data Collection
 
-### Option 1: Web Scraping (Recommended)
+### Option 1: Web Scraping
 
 ```bash
 cd "Data Scraping/myspider"
@@ -175,12 +175,15 @@ The scraper will:
 
 **Note**: Make sure to respect the website's robots.txt and rate limits.
 
-### Option 2: Import SQL Dump
+### Option 2: Import SQL Dump (Recommended)
 
-If you have a SQL dump file:
+We provide the SQL dump file with 110,000 reviews obtained from web scraping here:
+https://drive.google.com/drive/folders/17ZmDI0Bk8_7dgyvFtxtpTnStg8YbYYf_?usp=drive_link (ESSEC User or Request Needed)
+
+Download backup.sql and run the following command:
 
 ```bash
-psql -U username -d airline_db < your_data_dump.sql
+psql -U username -d airline_db < backup.sql
 ```
 
 ### Option 3: Manual Data Entry
