@@ -13,13 +13,13 @@ import useQuery from '../../hooks/useQuery';
 import useContext from '../../zustand/useContext';
 import { Spinner } from "@/components/ui/spinner";
 
-// 关键词高亮组件
+// Keyword highlighting component
 const HighlightText = ({ text, keywords = [], className = "" }) => {
     if (!text || !keywords || keywords.length === 0) {
         return <span className={className}>{text}</span>;
     }
     
-    // 创建正则表达式匹配所有关键词（不区分大小写）
+    // Create regex pattern to match all keywords (case-insensitive)
     const pattern = new RegExp(`(${keywords.map(k => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})`, 'gi');
     const parts = text.split(pattern);
     
@@ -43,7 +43,7 @@ const ReviewData = () => {
     const targetAirline = useContext((state) => state.targetAirline);
     const tableRef = useRef(null);
     
-    // 筛选状态
+    // Filter state
     const [filters, setFilters] = useState({
         start_date: '',
         end_date: '',
@@ -55,14 +55,14 @@ const ReviewData = () => {
         destination: ''
     });
     
-    // 分页状态
+    // Pagination state
     const [page, setPage] = useState(1);
     const pageSize = 20;
     
-    // 点击的 topic（用于自动筛选和滚动）
+    // Clicked topic (for auto-filtering and scrolling)
     const [clickedTopic, setClickedTopic] = useState(null);
     
-    // 构建 API URL
+    // Build API URL
     const url = useMemo(() => {
         if (!targetAirline) return null;
         
@@ -85,19 +85,19 @@ const ReviewData = () => {
     }, [targetAirline, filters, page]);
     
     const { data, loading } = useQuery(url, {
-        cacheTime: 10 * 60 * 1000, // 缓存 10 分钟
-        staleTime: 5 * 60 * 1000, // 5 分钟内不重新请求
-        refetchOnMount: false, // 使用缓存，不重新请求
+        cacheTime: 10 * 60 * 1000, // Cache for 10 minutes
+        staleTime: 5 * 60 * 1000, // No refetch within 5 minutes
+        refetchOnMount: false, // Use cache, no refetch
     });
     
-    // 处理点击 topic
+    // Handle topic click
     useEffect(() => {
         if (clickedTopic !== null) {
             setFilters(prev => ({ ...prev, topic_id: clickedTopic }));
             setPage(1);
             setClickedTopic(null);
             
-            // 滚动到表格顶部
+            // Scroll to table top
             setTimeout(() => {
                 if (tableRef.current) {
                     tableRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -106,7 +106,7 @@ const ReviewData = () => {
         }
     }, [clickedTopic]);
     
-    // 重置筛选
+    // Reset filters
     const resetFilters = () => {
         setFilters({
             start_date: '',
@@ -121,16 +121,16 @@ const ReviewData = () => {
         setPage(1);
     };
     
-    // 获取高亮关键词
+    // Get highlight keywords
     const getHighlightKeywords = (review) => {
         const keywords = [];
         
-        // 添加 topic 关键词
+        // Add topic keywords
         if (review.topic_words && Array.isArray(review.topic_words)) {
             keywords.push(...review.topic_words.slice(0, 5));
         }
         
-        // 添加 aspect 关键词
+        // Add aspect keywords
         if (review.matched_aspects && Array.isArray(review.matched_aspects)) {
             const aspectKeywords = {
                 'Seat Comfort': ['seat', 'comfortable', 'legroom', 'space'],
@@ -148,9 +148,9 @@ const ReviewData = () => {
             });
         }
         
-        return [...new Set(keywords)]; // 去重
+        return [...new Set(keywords)]; // Remove duplicates
     };
-    
+
     const columns = [
         {
             id: "index",
@@ -282,7 +282,7 @@ const ReviewData = () => {
                                 +{aspects.length - 3}
                             </span>
                         )}
-                    </div>
+                </div>
                 );
             },
             size: 200,
@@ -297,8 +297,8 @@ const ReviewData = () => {
     
     const reviewData = useMemo(() => {
         if (!data) return [];
-        // useQuery 返回的 data 结构：{ status: "success", data: {...} }
-        // 或者直接是 { reviews: [...], pagination: {...}, summary: {...} }
+        // useQuery returns data structure: { status: "success", data: {...} }
+        // Or directly: { reviews: [...], pagination: {...}, summary: {...} }
         const actualData = (data.status === 'success' && data.data) ? data.data : data;
         if (!actualData || !actualData.reviews) return [];
         return actualData.reviews;
@@ -317,7 +317,7 @@ const ReviewData = () => {
         if (!actualData || !actualData.pagination) return { page: 1, page_size: 20, total_count: 0, total_pages: 0 };
         return actualData.pagination;
     }, [data]);
-    
+
     const table = useReactTable({
         data: reviewData,
         columns,
@@ -327,10 +327,10 @@ const ReviewData = () => {
         manualPagination: true,
         pageCount: pagination.total_pages || 0,
     });
-    
+
     return (
         <div className="flex gap-4 p-4 h-full">
-            {/* 左侧筛选栏 */}
+            {/* Left filter panel */}
             <Card className="w-80 h-fit bg-white rounded-[20px] border border-[#f8f9fa] shadow-[0px_4px_20px_#ededed80]">
                 <CardHeader>
                     <CardTitle className="text-lg font-semibold flex items-center justify-between">
@@ -465,7 +465,7 @@ const ReviewData = () => {
                         />
                     </div>
                     
-                    {/* 聚合摘要 */}
+                    {/* Aggregate summary */}
                     {summary && (
                         <div className="pt-4 border-t space-y-2">
                             <Label className="text-sm font-semibold">Summary</Label>
@@ -513,20 +513,20 @@ const ReviewData = () => {
                 </CardContent>
             </Card>
             
-            {/* 右侧表格 */}
+            {/* Right table */}
             <Card className="flex-1 bg-white rounded-[20px] border border-[#f8f9fa] shadow-[0px_4px_20px_#ededed80] flex flex-col gap-2 overflow-hidden">
-                {!targetAirline ? (
-                    <div className="flex-1 flex items-center justify-center h-full">
-                        <div className="text-xl font-semibold text-center">
-                            ✈️ Please search for an airline to view reviews
-                        </div>
+            {!targetAirline ? (
+                <div className="flex-1 flex items-center justify-center h-full">
+                    <div className="text-xl font-semibold text-center">
+                        ✈️ Please search for an airline to view reviews
                     </div>
-                ) : loading ? (
-                    <div className="flex-1 flex items-center justify-center">
-                        <Spinner className="w-10 h-10 text-[#5D5FEF]" />
-                    </div>
-                ) : (
-                    <>
+                </div>
+            ) : loading ? (
+                <div className="flex-1 flex items-center justify-center">
+                    <Spinner className="w-10 h-10 text-[#5D5FEF]" />
+                </div>
+            ) : (
+                <>
                         <div className="p-4 border-b">
                             <div className="flex items-center justify-between">
                                 <h2 className="text-xl font-semibold">Review Data</h2>
@@ -534,8 +534,8 @@ const ReviewData = () => {
                                     Showing {pagination.total_count} reviews
                                 </div>
                             </div>
-                        </div>
-                        
+                    </div>
+                    
                         <div className="flex-1 overflow-auto" ref={tableRef}>
                             <Table>
                                 <TableHeader>
@@ -581,34 +581,34 @@ const ReviewData = () => {
                                     )}
                                 </TableBody>
                             </Table>
-                        </div>
-                        
+                    </div>
+
                         <div className="p-4 border-t flex items-center justify-between">
                             <div className="text-sm text-gray-500">
                                 Page {pagination.page} of {pagination.total_pages || 1}
                             </div>
                             <div className="flex items-center gap-2">
-                                <Button
-                                    variant="outline"
+                        <Button
+                            variant="outline"
                                     size="sm"
                                     onClick={() => setPage(p => Math.max(1, p - 1))}
                                     disabled={pagination.page <= 1}
-                                >
-                                    Previous
-                                </Button>
-                                <Button
-                                    variant="outline"
+                        >
+                            Previous
+                        </Button>
+                        <Button
+                            variant="outline"
                                     size="sm"
                                     onClick={() => setPage(p => Math.min(pagination.total_pages || 1, p + 1))}
                                     disabled={pagination.page >= (pagination.total_pages || 1)}
-                                >
-                                    Next
-                                </Button>
+                        >
+                            Next
+                        </Button>
                             </div>
-                        </div>
-                    </>
-                )}
-            </Card>
+                    </div>
+                </>
+            )}
+        </Card>
         </div>
     );
 };
