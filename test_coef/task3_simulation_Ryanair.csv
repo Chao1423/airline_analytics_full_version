@@ -1,0 +1,5 @@
+Scenario,Changes,Predicted score,Δ vs baseline
+Baseline,(current levels),4.291,0.0
+A: Improve top driver,Value for Money +0.5,4.921,0.63
+B: Improve 2nd driver,Cabin Staff & Service +0.5,4.487,0.196
+C: Combined,Value for Money +0.5; Cabin Staff & Service +0.5,5.117,0.826

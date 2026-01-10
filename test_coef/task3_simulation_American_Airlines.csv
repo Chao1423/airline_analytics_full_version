@@ -1,0 +1,5 @@
+Scenario,Changes,Predicted score,Δ vs baseline
+Baseline,(current levels),2.387,0.0
+A: Improve top driver,Value for Money +0.5,3.052,0.665
+B: Improve 2nd driver,Ground Service +0.5,2.533,0.146
+C: Combined,Value for Money +0.5; Ground Service +0.5,3.198,0.811

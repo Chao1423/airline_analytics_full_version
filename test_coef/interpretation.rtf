@@ -1,0 +1,37 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2865
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 Task 3\
+\
+Included files (3 airlines):\
+- task3_coefficients_American_Airlines.csv\
+- task3_simulation_American_Airlines.csv\
+- task3_coefficients_Ryanair.csv\
+- task3_simulation_Ryanair.csv\
+- task3_coefficients_British_Airways.csv\
+- task3_simulation_British_Airways.csv\
+\
+What they are:\
+- coefficients_*.csv: ranked linear regression coefficients (drivers) for score ~ 7 sub-ratings.\
+  Use for the \'93Driver/Coefficient table\'94 slide.\
+- simulation_*.csv: baseline + 3 what-if scenarios (A/B/C) with predicted score and \uc0\u916  vs baseline.\
+  Use for the \'93What-if simulation / recommendations\'94 slide.\
+\
+Scenario setup:\
+- delta = +0.5 on the top two positive drivers (bounded to [0, 5])\
+  A: top driver +0.5\
+  B: 2nd driver +0.5\
+  C: A + B combined\
+\
+How to interpret:\
+- Focus on \uc0\u916  vs baseline (relative lift). Predicted score is on the dataset\'92s internal `score` scale.\
+\
+Repro:\
+python task3_from_db.py --airline "American Airlines" --delta 0.5\
+python task3_from_db.py --airline "Ryanair" --delta 0.5\
+python task3_from_db.py --airline "British Airways" --delta 0.5\
+}
